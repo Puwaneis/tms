@@ -6,18 +6,12 @@ Full-stack app: **React (Vite)** frontend, **Flask** REST API, and **SQLAlchemy*
 
 - **Node.js** 18+ and npm  
 - **Python** 3.10+  
-- **Git**  
 
 On Windows, building **mysqlclient** may require extra C build tools; SQLite mode does not need MySQL.
 
-## 1. Clone and enter the project
+All commands below assume your terminal’s **current directory is the project root** (the folder that contains `package.json` and the `api/` directory).
 
-```bash
-git clone <repository-url>
-cd task-management-system
-```
-
-## 2. Python environment and backend dependencies
+## 1. Python environment and backend dependencies
 
 Create a virtual environment at the **repository root** (the `npm run dev` script expects `venv` here on Windows).
 
@@ -37,7 +31,7 @@ source venv/bin/activate
 pip install -r api/requirements.txt
 ```
 
-## 3. Database configuration
+## 2. Database configuration
 
 The API loads environment variables from **`api/.env`**. Create that file if it does not exist.
 
@@ -58,7 +52,7 @@ SQLALCHEMY_DATABASE_URI_DEV=mysql+mysqldb://USER:PASSWORD@127.0.0.1:3306/task_ma
 
 Ensure the MySQL database exists before running migrations.
 
-## 4. Apply database migrations
+## 3. Apply database migrations
 
 From the **`api`** directory, with the virtual environment activated:
 
@@ -70,7 +64,7 @@ cd ..
 
 This uses **Flask-Migrate** / Alembic migrations in `api/migrations/`.
 
-## 5. Frontend dependencies
+## 4. Frontend dependencies
 
 From the **repository root**:
 
@@ -78,7 +72,7 @@ From the **repository root**:
 npm install
 ```
 
-## 6. Run the app locally
+## 5. Run the app locally
 
 The Vite dev server proxies `/api` to **`http://localhost:5000`** (see `vite.config.js`). The Flask development server must listen on port **5000** (default for `flask run`).
 
@@ -149,4 +143,3 @@ To add automated tests later, typical choices are **pytest** for Flask and **Vit
 - **401 on API:** Log in again; JWT may be expired or missing from `localStorage`.  
 - **Database errors after pulling code:** Run `flask db upgrade` again from `api/`.  
 - **Module not found on backend:** Ensure `venv` is activated and `pip install -r api/requirements.txt` completed successfully.
-# tms
