@@ -6,6 +6,9 @@ import tailwindcss from '@tailwindcss/vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+const apiProxyTarget =
+  process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:5000'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -18,8 +21,12 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
     proxy: {
-      '/api': 'http://localhost:5000',
+      '/api': {
+        target: apiProxyTarget,
+        changeOrigin: true,
+      },
     },
   },
 })

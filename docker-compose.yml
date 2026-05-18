@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_local_only
+      MYSQL_DATABASE: task_management
+      MYSQL_USER: tms
+      MYSQL_PASSWORD: tms_local_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "127.0.0.1",
+          "-uroot",
+          "-proot_local_only",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    environment:
+      FLASK_APP: app.py
+      SQLALCHEMY_DATABASE_URI_DEV: mysql+mysqldb://tms:tms_local_password@mysql:3306/task_management
+      SQLALCHEMY_TRACK_MODIFICATIONS: "False"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-docker-change-this-secret}
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    environment:
+      VITE_API_PROXY_TARGET: http://api:5000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  mysql_data:

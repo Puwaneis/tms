@@ -110,6 +110,26 @@ Or run `npx vite` from the repo root.
 
 The **first user registered** through the app becomes **`super_admin`** if no users exist yet. Later registrations are normal **`user`** roles. Use the first account to access **Users** and **Tasks** in the UI.
 
+## Docker (MySQL + API + Vite)
+
+Requires [Docker Compose](https://docs.docker.com/compose/) v2+. From the project root:
+
+```bash
+docker compose up --build
+```
+
+- **Frontend:** [http://localhost:5173](http://localhost:5173) (Vite dev server; `/api` is proxied to the `api` service inside the network.)
+- **API:** [http://localhost:5000](http://localhost:5000) (browser `fetch` calls in this app still use `http://localhost:5000`, which maps to the same container.)
+- **MySQL:** not published to the host; data is stored in the `mysql_data` volume. Default credentials are for **local Docker only** (see `docker-compose.yml`: `tms` / `tms_local_password`, database `task_management`).
+
+Optional: override the JWT secret when starting:
+
+```bash
+JWT_SECRET_KEY=your-secret docker compose up --build
+```
+
+The API image runs `flask db upgrade` on startup after MySQL is healthy.
+
 ## Running checks and tests locally
 
 There is **no dedicated automated test suite** (pytest / Vitest) checked into this repository yet. You can still validate locally:
